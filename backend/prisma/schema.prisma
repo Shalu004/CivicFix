@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CITIZEN
+  ADMIN
+}
+
+enum Category {
+  POTHOLE
+  SEWAGE
+  GARBAGE
+  ELECTRICITY
+  WATER
+  STREETLIGHT
+  OTHER
+}
+
+enum Status {
+  PENDING
+  VERIFIED
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+  ESCALATED
+}
+
+enum Authenticity {
+  UNVERIFIED
+  VERIFIED
+  SPAM
+}
+
+model User {
+  id           Int             @id @default(autoincrement())
+  name         String
+  email        String          @unique
+  passwordHash String
+  role         Role            @default(CITIZEN)
+  createdAt    DateTime        @default(now())
+  
+  issues       Issue[]         @relation("ReportedIssues")
+  votes        Vote[]
+  statusHistory StatusHistory[] @relation("AdminStatusChanges")
+}
+
+model Issue {
+  id           Int             @id @default(autoincrement())
+  title        String
+  description  String
+  category     Category
+  imageUrl     String?
+  latitude     Float?
+  longitude    Float?
+  address      String
+  status       Status          @default(PENDING)
+  authenticity Authenticity    @default(UNVERIFIED)
+  voteCount    Int             @default(0)
+  reporterId   Int
+  reporter     User            @relation("ReportedIssues", fields: [reporterId], references: [id], onDelete: Cascade)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  votes        Vote[]
+  statusHistory StatusHistory[]
+}
+
+model Vote {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  issueId   Int
+  issue     Issue    @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, issueId])
+}
+
+model StatusHistory {
+  id               Int      @id @default(autoincrement())
+  issueId          Int
+  issue            Issue    @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  status           Status
+  note             String?
+  changedByAdminId Int?
+  changedByAdmin   User?    @relation("AdminStatusChanges", fields: [changedByAdminId], references: [id], onDelete: SetNull)
+  createdAt        DateTime @default(now())
+}
