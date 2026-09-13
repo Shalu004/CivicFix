@@ -8,6 +8,8 @@ import authRoutes from './routes/authRoutes.js';
 import issueRoutes from './routes/issueRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 
+import prisma from './utils/prisma.js';
+
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -18,13 +20,14 @@ const PORT = process.env.PORT || 5000;
 
 // CORS setup
 const allowedOrigins = process.env.FRONTEND_URL
-  ? process.env.FRONTEND_URL.split(',').map(u => u.trim())
+  ? process.env.FRONTEND_URL.split(',').map(u => u.trim().replace(/\/$/, ''))
   : ['http://localhost:5173', 'http://127.0.0.1:5173'];
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow non-browser requests (Postman, curl, server-to-server) or allowed origins
-    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+    if (!origin) return callback(null, true);
+    const cleanOrigin = origin.replace(/\/$/, '');
+    if (allowedOrigins.includes(cleanOrigin) || cleanOrigin.endsWith('.vercel.app') || process.env.NODE_ENV !== 'production') {
       callback(null, true);
     } else {
       callback(null, true);
@@ -44,9 +47,15 @@ app.use('/api/auth', authRoutes);
 app.use('/api/issues', issueRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'CivicFix API is running smooth!' });
+// Health check with DB status
+app.get('/api/health', async (req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ status: 'ok', database: 'connected', message: 'CivicFix API is running smooth!' });
+  } catch (err) {
+    console.error('Database Health Check Failed:', err.message);
+    res.status(500).json({ status: 'error', database: 'disconnected', error: err.message });
+  }
 });
 
 // Global error handler

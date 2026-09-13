@@ -88,7 +88,10 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     console.error('Login Error:', error);
-    return res.status(500).json({ message: 'Server error during login.' });
+    const msg = (error.code && error.code.startsWith('P')) || error.message?.includes('Table')
+      ? `Database error: Ensure database migrations ('npx prisma migrate deploy') and seed ('npm run seed') have been run on Supabase.`
+      : (error.message || 'Server error during login.');
+    return res.status(500).json({ message: msg });
   }
 };
 
