@@ -5,9 +5,7 @@ import CategoryIcon from './CategoryIcon.jsx';
 import StatusBadge from './StatusBadge.jsx';
 import { issueAPI } from '../api/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const BACKEND_URL = API_BASE_URL.replace('/api', '');
+import { getImageUrl } from '../api/config.js';
 
 const IssueCard = ({ issue, onVoteSuccess }) => {
   const { user } = useAuth();
@@ -42,12 +40,6 @@ const IssueCard = ({ issue, onVoteSuccess }) => {
     } finally {
       setVoting(false);
     }
-  };
-
-  const getImageUrl = (url) => {
-    if (!url) return null;
-    if (url.startsWith('http')) return url;
-    return `${BACKEND_URL}${url}`;
   };
 
   const formattedDate = new Date(issue.createdAt).toLocaleDateString('en-US', {

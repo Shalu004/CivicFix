@@ -3,11 +3,10 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { MapPin, Calendar, User, ThumbsUp, ArrowLeft, ShieldCheck, AlertTriangle, Clock, CheckCircle, RefreshCw } from 'lucide-react';
 import CategoryIcon from '../components/CategoryIcon.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
+import IssueLocationMap from '../components/IssueLocationMap.jsx';
 import { issueAPI } from '../api/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const BACKEND_URL = API_BASE_URL.replace('/api', '');
+import { getImageUrl } from '../api/config.js';
 
 const IssueDetail = () => {
   const { id } = useParams();
@@ -59,12 +58,6 @@ const IssueDetail = () => {
     } finally {
       setVoting(false);
     }
-  };
-
-  const getImageUrl = (url) => {
-    if (!url) return null;
-    if (url.startsWith('http')) return url;
-    return `${BACKEND_URL}${url}`;
   };
 
   if (loading) {
@@ -174,6 +167,14 @@ const IssueDetail = () => {
                 {issue.description}
               </p>
             </div>
+
+            {/* Interactive Leaflet Map View */}
+            <IssueLocationMap
+              latitude={issue.latitude}
+              longitude={issue.longitude}
+              address={issue.address}
+              title={issue.title}
+            />
 
             {/* Voting Bar */}
             <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 flex items-center justify-between">

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Camera, MapPin, AlertCircle, CheckCircle, Upload, ArrowLeft } from 'lucide-react';
 import { issueAPI } from '../api/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import LocationPickerMap from '../components/LocationPickerMap.jsx';
 
 const CATEGORIES = [
   { value: 'POTHOLE', label: 'Pothole' },
@@ -196,13 +197,31 @@ const ReportIssue = () => {
               <input
                 type="text"
                 required
-                placeholder="e.g. 104 Main Street, opposite Central Mall"
+                placeholder="e.g. Plot 12, Nyay Khand, Indirapuram, Ghaziabad"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all mb-3"
               />
 
-              <div className="grid grid-cols-2 gap-3 mt-3">
+              {/* Leaflet Interactive Map Picker */}
+              <div className="mb-3">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                  Pin Point Location on Map
+                </label>
+                <LocationPickerMap
+                  lat={latitude}
+                  lng={longitude}
+                  onLocationSelect={(lat, lng) => {
+                    setLatitude(lat.toFixed(6));
+                    setLongitude(lng.toFixed(6));
+                    if (!address) {
+                      setAddress(`Map Pin Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`);
+                    }
+                  }}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <input
                     type="number"

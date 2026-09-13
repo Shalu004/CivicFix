@@ -1,5 +1,6 @@
 import prisma from '../utils/prisma.js';
 import { verifyToken } from '../utils/jwt.js';
+import { processUploadedFile } from '../middleware/upload.js';
 
 const VOTE_THRESHOLD = parseInt(process.env.VOTE_THRESHOLD || '10', 10);
 
@@ -17,10 +18,7 @@ export const createIssue = async (req, res) => {
       return res.status(400).json({ message: 'Invalid issue category.' });
     }
 
-    let imageUrl = null;
-    if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
-    }
+    const imageUrl = await processUploadedFile(req.file);
 
     const lat = latitude ? parseFloat(latitude) : null;
     const lng = longitude ? parseFloat(longitude) : null;

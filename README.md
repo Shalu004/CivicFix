@@ -77,6 +77,8 @@ civicfix/
 │   │   │   ├── Navbar.jsx
 │   │   │   ├── Footer.jsx
 │   │   │   ├── IssueCard.jsx
+│   │   │   ├── LocationPickerMap.jsx
+│   │   │   ├── IssueLocationMap.jsx
 │   │   │   ├── StatusBadge.jsx
 │   │   │   ├── CategoryIcon.jsx
 │   │   │   ├── ProtectedRoute.jsx
@@ -102,13 +104,20 @@ civicfix/
 │   ├── postcss.config.js
 │   └── package.json
 │
+├── DEPLOYMENT.md
 ├── README.md
 └── .gitignore
 ```
 
 ---
 
-## ⚡ Quick Start & Installation
+## 🚀 Production Deployment
+
+For complete production deployment instructions (Vercel, Render, Supabase, Cloudinary setup), see the [Production Deployment Guide](file:///C:/Users/musha/.gemini/antigravity-ide/scratch/civicfix/DEPLOYMENT.md).
+
+---
+
+## ⚡ Quick Start & Local Setup
 
 ### 1. Prerequisites
 * **Node.js**: v18.x or higher
@@ -157,7 +166,12 @@ npm run dev
 
 ---
 
-## 🔑 Demo Credentials
+## 🔑 Demo Credentials & Demonstration Dataset
+
+> [!NOTE]
+> **Ghaziabad, Uttar Pradesh Demonstration Data**:
+> The initial database seed contains 10 realistic demonstration issues located across key Ghaziabad localities (Indirapuram, Vaishali, Vasundhara, Kaushambi, Raj Nagar, Raj Nagar Extension, Crossings Republik, Sahibabad, Vijay Nagar, and Kavi Nagar).
+> Map views, coordinates, and locality filters default to Ghaziabad (`28.6692, 77.4538`).
 
 | Role | Email | Password | Access |
 | :--- | :--- | :--- | :--- |

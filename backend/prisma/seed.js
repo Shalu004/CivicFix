@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting CivicFix database seeding...');
+  console.log('🌱 Starting CivicFix database seeding (Ghaziabad, UP, India)...');
 
   // Clean existing data
   await prisma.statusHistory.deleteMany();
@@ -25,21 +25,20 @@ async function main() {
     }
   });
 
-  // 2. Create Citizen
+  // 2. Create Citizens for realistic activity
   const citizen = await prisma.user.create({
     data: {
-      name: 'John Citizen',
+      name: 'Rahul Sharma',
       email: 'citizen@civicfix.local',
       passwordHash: citizenPasswordHash,
       role: 'CITIZEN'
     }
   });
 
-  // 3. Additional Citizens for realistic voting data
   const citizen2 = await prisma.user.create({
     data: {
-      name: 'Sarah Connor',
-      email: 'sarah@civicfix.local',
+      name: 'Priya Verma',
+      email: 'priya@civicfix.local',
       passwordHash: citizenPasswordHash,
       role: 'CITIZEN'
     }
@@ -47,126 +46,197 @@ async function main() {
 
   const citizen3 = await prisma.user.create({
     data: {
-      name: 'David Miller',
-      email: 'david@civicfix.local',
+      name: 'Amit Gupta',
+      email: 'amit@civicfix.local',
       passwordHash: citizenPasswordHash,
       role: 'CITIZEN'
     }
   });
 
-  console.log('✅ Users seeded:');
+  console.log('✅ Demo Users seeded:');
   console.log('   Admin:   admin@civicfix.local / Admin@12345');
   console.log('   Citizen: citizen@civicfix.local / Citizen@12345');
 
-  // 4. Sample Issues
+  // 3. Sample Ghaziabad Civic Issues (Demonstration / Seed Data)
   const sampleIssues = [
     {
-      title: 'Dangerous Pothole on Main Street Crossing',
-      description: 'Large 8-inch deep pothole causing severe traffic slowdowns and damage to vehicle tires. Needs urgent asphalt repair.',
+      title: 'Large Pothole on Kala Pathar Road, Indirapuram',
+      description: 'Demo report showing a 6-inch deep pothole causing severe traffic slowdowns and hazard for two-wheelers near Kala Pathar crossing.',
       category: 'POTHOLE',
-      address: '104 Main Street, Downtown Sector 4',
-      latitude: 40.7128,
-      longitude: -74.0060,
+      address: 'Kala Pathar Road, Nyay Khand 2, Indirapuram, Ghaziabad',
+      latitude: 28.6369,
+      longitude: 77.3698,
       status: 'VERIFIED',
       authenticity: 'VERIFIED',
       voteCount: 12,
       reporterId: citizen.id,
       statusHistory: {
         create: [
-          { status: 'PENDING', note: 'Reported by citizen.' },
-          { status: 'VERIFIED', note: 'Inspected by field inspector; report confirmed.', changedByAdminId: admin.id }
+          { status: 'PENDING', note: 'Demo report submitted by citizen.' },
+          { status: 'VERIFIED', note: 'Inspected by municipal road team; report confirmed.', changedByAdminId: admin.id }
         ]
       }
     },
     {
-      title: 'Overflowing Sewage Line near Community Park',
-      description: 'Sewage water leaking onto sidewalk near the children playground entrance, creating severe odor and hygiene concerns.',
+      title: 'Overflowing Sewage Line near Vaishali Metro Station',
+      description: 'Demo report showing sewage water leaking onto pedestrian walkway near Sector 4 market and metro entrance.',
       category: 'SEWAGE',
-      address: '45 Park Avenue, Westside',
-      latitude: 40.7150,
-      longitude: -74.0090,
+      address: 'Sector 4, Near Vaishali Metro Station, Vaishali, Ghaziabad',
+      latitude: 28.6476,
+      longitude: 77.3828,
       status: 'IN_PROGRESS',
       authenticity: 'VERIFIED',
       voteCount: 18,
       reporterId: citizen2.id,
       statusHistory: {
         create: [
-          { status: 'PENDING', note: 'Report submitted.' },
+          { status: 'PENDING', note: 'Demo report submitted.' },
           { status: 'VERIFIED', note: 'Municipal team assigned.', changedByAdminId: admin.id },
-          { status: 'IN_PROGRESS', note: 'Water sanitation crew dispatched to replace broken pipe section.', changedByAdminId: admin.id }
+          { status: 'IN_PROGRESS', note: 'Drainage repair team dispatched with suction machine.', changedByAdminId: admin.id }
         ]
       }
     },
     {
-      title: 'Uncollected Garbage Accumulation at Market Square',
-      description: 'Commercial waste bins overflowing for 3 consecutive days. Trash blocking pedestrian walkway.',
+      title: 'Uncollected Garbage Accumulation at Sector 10 Market',
+      description: 'Demo report highlighting commercial waste bins overflowing near local shops and blocking pedestrian passage.',
       category: 'GARBAGE',
-      address: '12 Market Square, Central District',
-      latitude: 40.7180,
-      longitude: -74.0020,
+      address: 'Sector 10 Market, Vasundhara, Ghaziabad',
+      latitude: 28.6606,
+      longitude: 77.3782,
       status: 'PENDING',
       authenticity: 'UNVERIFIED',
       voteCount: 4,
       reporterId: citizen3.id,
       statusHistory: {
         create: [
-          { status: 'PENDING', note: 'Report submitted.' }
+          { status: 'PENDING', note: 'Demo report submitted.' }
         ]
       }
     },
     {
-      title: 'Flickering Streetlight near School Bus Stop',
-      description: 'Streetlight #SL-402 flickering rapidly and going pitch dark at night, endangering children during evening activities.',
+      title: 'Flickering Streetlight on Raj Nagar Extension Main Road',
+      description: 'Demo report showing streetlight unit SL-204 flickering rapidly and turning off at night near residential tower complex.',
       category: 'STREETLIGHT',
-      address: '88 Elm Street, North Ward',
-      latitude: 40.7220,
-      longitude: -74.0110,
+      address: 'Raj Nagar Extension Main Road, Ghaziabad',
+      latitude: 28.7050,
+      longitude: 77.4350,
       status: 'RESOLVED',
       authenticity: 'VERIFIED',
       voteCount: 9,
       reporterId: citizen.id,
       statusHistory: {
         create: [
-          { status: 'PENDING', note: 'Report submitted.' },
-          { status: 'VERIFIED', note: 'Inspected by electrical department.', changedByAdminId: admin.id },
-          { status: 'IN_PROGRESS', note: 'Replacing LED fixture unit.', changedByAdminId: admin.id },
-          { status: 'RESOLVED', note: 'New LED luminaire installed and tested successfully.', changedByAdminId: admin.id }
+          { status: 'PENDING', note: 'Demo report submitted.' },
+          { status: 'VERIFIED', note: 'Electrical inspection completed.', changedByAdminId: admin.id },
+          { status: 'IN_PROGRESS', note: 'Replacing faulty LED luminaire.', changedByAdminId: admin.id },
+          { status: 'RESOLVED', note: 'New LED streetlight luminaire installed and tested.', changedByAdminId: admin.id }
         ]
       }
     },
     {
       title: 'Exposed Electrical Junction Box on Sidewalk',
-      description: 'High voltage junction box cover is missing, exposing bare wires within reach of pedestrians.',
+      description: 'Demo report showing high-voltage electrical cable junction box cover missing near commercial complex.',
       category: 'ELECTRICITY',
-      address: '302 Broadway St, Eastside',
-      latitude: 40.7110,
-      longitude: -73.9980,
+      address: 'Kaushambi Central Park Road, Kaushambi, Ghaziabad',
+      latitude: 28.6430,
+      longitude: 77.3190,
       status: 'ESCALATED',
       authenticity: 'VERIFIED',
       voteCount: 22,
       reporterId: citizen2.id,
       statusHistory: {
         create: [
-          { status: 'PENDING', note: 'Report submitted.' },
-          { status: 'ESCALATED', note: 'Automatically escalated: Threshold of 10 votes reached.' }
+          { status: 'PENDING', note: 'Demo report submitted.' },
+          { status: 'ESCALATED', note: 'Automatically escalated: Community vote threshold of 10 votes reached.' }
         ]
       }
     },
     {
-      title: 'Low Water Pressure and Discolored Water Supply',
-      description: 'Multiple housing units reporting muddy tap water and low pressure since morning.',
+      title: 'Low Water Pressure and Turbid Water Supply',
+      description: 'Demo report regarding low tap water pressure reported across residential block during morning supply hours.',
       category: 'WATER',
-      address: '55 Riverfront Drive, Southside',
-      latitude: 40.7080,
-      longitude: -74.0150,
+      address: 'GH-7 Boulevard, Crossings Republik, Ghaziabad',
+      latitude: 28.6250,
+      longitude: 77.4350,
       status: 'REJECTED',
       authenticity: 'SPAM',
       voteCount: 1,
       reporterId: citizen3.id,
       statusHistory: {
         create: [
-          { status: 'PENDING', note: 'Report submitted.' },
-          { status: 'REJECTED', note: 'Duplicate report. Issue already being addressed under ticket #W-804.', changedByAdminId: admin.id }
+          { status: 'PENDING', note: 'Demo report submitted.' },
+          { status: 'REJECTED', note: 'Duplicate report. Issue already registered under ticket #W-409.', changedByAdminId: admin.id }
+        ]
+      }
+    },
+    {
+      title: 'Waterlogging on Site 4 Main Road',
+      description: 'Demo report showing stagnant rainwater accumulation near factory gate creating difficulty for commuting workers.',
+      category: 'OTHER',
+      address: 'Site 4 Industrial Area, Sahibabad, Ghaziabad',
+      latitude: 28.6720,
+      longitude: 77.3510,
+      status: 'PENDING',
+      authenticity: 'UNVERIFIED',
+      voteCount: 3,
+      reporterId: citizen.id,
+      statusHistory: {
+        create: [
+          { status: 'PENDING', note: 'Demo report submitted.' }
+        ]
+      }
+    },
+    {
+      title: 'Damaged Footpath Slabs near District Center',
+      description: 'Demo report showing broken concrete slabs on pedestrian walking track near commercial center.',
+      category: 'POTHOLE',
+      address: 'Block 10, Raj Nagar, Ghaziabad',
+      latitude: 28.6830,
+      longitude: 77.4470,
+      status: 'IN_PROGRESS',
+      authenticity: 'VERIFIED',
+      voteCount: 7,
+      reporterId: citizen2.id,
+      statusHistory: {
+        create: [
+          { status: 'PENDING', note: 'Demo report submitted.' },
+          { status: 'VERIFIED', note: 'Civil maintenance team assigned.', changedByAdminId: admin.id },
+          { status: 'IN_PROGRESS', note: 'Footpath paving tiles being replaced.', changedByAdminId: admin.id }
+        ]
+      }
+    },
+    {
+      title: 'Garbage Dumping near Bypass Flyover Ramp',
+      description: 'Demo report highlighting illegal plastic and construction debris dumping along roadside slope.',
+      category: 'GARBAGE',
+      address: 'Bypass Road, Vijay Nagar, Ghaziabad',
+      latitude: 28.6490,
+      longitude: 77.4390,
+      status: 'VERIFIED',
+      authenticity: 'VERIFIED',
+      voteCount: 11,
+      reporterId: citizen3.id,
+      statusHistory: {
+        create: [
+          { status: 'PENDING', note: 'Demo report submitted.' },
+          { status: 'VERIFIED', note: 'Sanitation inspector verified site.', changedByAdminId: admin.id }
+        ]
+      }
+    },
+    {
+      title: 'Faulty Distribution Transformer Sparking',
+      description: 'Demo report showing roadside transformer unit sparking during high load periods.',
+      category: 'ELECTRICITY',
+      address: 'C-Block, Kavi Nagar, Ghaziabad',
+      latitude: 28.6740,
+      longitude: 77.4520,
+      status: 'PENDING',
+      authenticity: 'UNVERIFIED',
+      voteCount: 5,
+      reporterId: citizen.id,
+      statusHistory: {
+        create: [
+          { status: 'PENDING', note: 'Demo report submitted.' }
         ]
       }
     }
@@ -177,7 +247,7 @@ async function main() {
       data: issueData
     });
 
-    // Seed some votes
+    // Seed votes
     if (createdIssue.voteCount > 0) {
       const voters = [citizen, citizen2, citizen3];
       for (let i = 0; i < Math.min(createdIssue.voteCount, voters.length); i++) {
@@ -186,13 +256,13 @@ async function main() {
             userId: voters[i].id,
             issueId: createdIssue.id
           }
-        }).catch(() => {}); // ignore unique constraint duplicate seeding
+        }).catch(() => {}); // ignore unique constraint duplicates
       }
     }
   }
 
-  console.log(`✅ Seeded ${sampleIssues.length} sample issues with votes and history timeline.`);
-  console.log('🎉 Seeding completed successfully!');
+  console.log(`✅ Seeded ${sampleIssues.length} Ghaziabad sample issues with votes and history timeline.`);
+  console.log('🎉 Ghaziabad seeding completed successfully!');
 }
 
 main()
