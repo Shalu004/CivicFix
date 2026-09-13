@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { MapPin, Calendar, User, ThumbsUp, ArrowLeft, ShieldCheck, AlertTriangle, Clock, CheckCircle, RefreshCw } from 'lucide-react';
 import CategoryIcon from '../components/CategoryIcon.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
@@ -12,6 +12,8 @@ const IssueDetail = () => {
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const justSubmitted = location.state?.justSubmitted || false;
 
   const [issue, setIssue] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -98,6 +100,19 @@ const IssueDetail = () => {
           <span>Back to Issues</span>
         </button>
 
+        {/* Submission Success Confirmation Banner */}
+        {justSubmitted && (
+          <div className="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-900 p-4 rounded-2xl flex items-start space-x-3 shadow-sm">
+            <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-bold text-sm">Issue Report Submitted Successfully!</h4>
+              <p className="text-xs text-emerald-700 mt-0.5">
+                Your report has been logged and is currently pending verification by municipal team inspectors.
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           {/* Issue Header Banner */}
           <div className="p-6 sm:p-8 border-b border-slate-100">
@@ -177,10 +192,18 @@ const IssueDetail = () => {
             />
 
             {/* Voting Bar */}
-            <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 flex items-center justify-between">
+            <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <span className="text-sm font-bold text-slate-900">{issue.voteCount} Upvotes</span>
-                <p className="text-xs text-slate-500">Citizens supporting this resolution request</p>
+                <span className="text-sm font-bold text-slate-900">{issue.voteCount} Community Upvotes</span>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {issue.status === 'ESCALATED' ? (
+                    <strong className="text-amber-700">⚡ Community vote threshold (10 upvotes) reached — Auto-escalated to municipal team</strong>
+                  ) : issue.voteCount < 10 ? (
+                    <span>{10 - issue.voteCount} more upvote{10 - issue.voteCount === 1 ? '' : 's'} needed for automatic municipal escalation</span>
+                  ) : (
+                    <span>High priority community resolution request</span>
+                  )}
+                </p>
               </div>
 
               <button

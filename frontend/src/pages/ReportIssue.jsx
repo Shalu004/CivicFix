@@ -50,17 +50,18 @@ const ReportIssue = () => {
         (position) => {
           setLatitude(position.coords.latitude.toFixed(6));
           setLongitude(position.coords.longitude.toFixed(6));
+          setError(null);
           if (!address) {
             setAddress(`GPS Location (${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)})`);
           }
         },
         (err) => {
           console.error('Geolocation error:', err);
-          alert('Could not retrieve current location. Please enter location address manually.');
+          setError('Could not retrieve GPS location automatically. Please click anywhere on the Leaflet map below to set your pin or type an address.');
         }
       );
     } else {
-      alert('Geolocation is not supported by your browser.');
+      setError('Geolocation is not supported by your browser. Please select location on the map below.');
     }
   };
 
@@ -90,7 +91,7 @@ const ReportIssue = () => {
       if (file) formData.append('image', file);
 
       const res = await issueAPI.create(formData);
-      navigate(`/issues/${res.data.issue.id}`);
+      navigate(`/issues/${res.data.issue.id}`, { state: { justSubmitted: true } });
     } catch (err) {
       console.error('Submit issue error:', err);
       setError(err.response?.data?.message || 'Failed to submit issue report. Please check input fields.');

@@ -47,6 +47,26 @@ const Home = () => {
     fetchIssues();
   };
 
+  const resetFilters = async () => {
+    setSearch('');
+    setSelectedCategory('ALL');
+    setSelectedStatus('ALL');
+    setSortBy('recent');
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await issueAPI.getAll({ sort: 'recent' });
+      setIssues(res.data.issues || []);
+    } catch (err) {
+      console.error('Error fetching issues:', err);
+      setError('Failed to load civic issues. Please ensure backend is running.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const hasActiveFilters = search.trim() !== '' || selectedCategory !== 'ALL' || selectedStatus !== 'ALL';
+
   return (
     <div className="flex-1 bg-slate-50 pb-16">
       {/* Hero Banner */}
@@ -144,6 +164,16 @@ const Home = () => {
                   <option value="votes">Most Voted</option>
                 </select>
               </div>
+
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="text-xs text-slate-500 hover:text-slate-900 font-semibold underline px-1 py-1"
+                >
+                  Clear Filters
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -175,12 +205,22 @@ const Home = () => {
             <p className="text-slate-500 text-sm mt-1">
               Try adjusting your category filters, search keywords, or report a new civic issue.
             </p>
-            <Link
-              to="/report"
-              className="inline-block mt-5 px-5 py-2.5 bg-sky-600 text-white text-sm font-bold rounded-xl shadow-sm hover:bg-sky-700 transition-colors"
-            >
-              Report a New Issue
-            </Link>
+            <div className="mt-5 flex items-center justify-center gap-3">
+              {hasActiveFilters && (
+                <button
+                  onClick={resetFilters}
+                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-colors"
+                >
+                  Clear Filters
+                </button>
+              )}
+              <Link
+                to="/report"
+                className="px-5 py-2.5 bg-sky-600 text-white text-sm font-bold rounded-xl shadow-sm hover:bg-sky-700 transition-colors inline-block"
+              >
+                Report a New Issue
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

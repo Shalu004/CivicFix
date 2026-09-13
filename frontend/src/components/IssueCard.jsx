@@ -94,23 +94,36 @@ const IssueCard = ({ issue, onVoteSuccess }) => {
         </div>
       </div>
 
-      <div className="px-5 py-3.5 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between">
-        <button
-          onClick={handleVote}
-          disabled={voting}
-          className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${
-            hasVoted
-              ? 'bg-sky-600 text-white shadow-sm hover:bg-sky-700'
-              : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 hover:border-slate-400'
-          }`}
-        >
-          <ThumbsUp className={`w-4 h-4 ${hasVoted ? 'fill-current' : ''}`} />
-          <span>{voteCount} Upvotes</span>
-        </button>
+      <div className="px-5 py-3.5 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between gap-2">
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={handleVote}
+            disabled={voting}
+            aria-label={`Upvote issue ${issue.title}. Current count: ${voteCount}`}
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              hasVoted
+                ? 'bg-sky-600 text-white shadow-sm hover:bg-sky-700'
+                : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 hover:border-slate-400'
+            }`}
+          >
+            <ThumbsUp className={`w-3.5 h-3.5 ${hasVoted ? 'fill-current' : ''}`} />
+            <span>{voteCount}</span>
+          </button>
+
+          {currentStatus === 'ESCALATED' ? (
+            <span className="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200" title="Escalated to municipal authorities by community vote threshold">
+              ⚡ Escalated
+            </span>
+          ) : voteCount < 10 ? (
+            <span className="text-[10px] font-medium text-slate-400" title="Reaching 10 upvotes automatically escalates issue to municipal team">
+              {10 - voteCount} more to escalate
+            </span>
+          ) : null}
+        </div>
 
         <Link
           to={`/issues/${issue.id}`}
-          className="text-xs font-semibold text-sky-600 hover:text-sky-800 transition-colors"
+          className="text-xs font-bold text-sky-600 hover:text-sky-800 transition-colors shrink-0"
         >
           View Details &rarr;
         </Link>
