@@ -3,7 +3,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { execSync } from 'child_process';
 
 import authRoutes from './routes/authRoutes.js';
 import issueRoutes from './routes/issueRoutes.js';
@@ -66,16 +65,6 @@ app.use((err, req, res, next) => {
     message: err.message || 'Internal Server Error'
   });
 });
-
-// Automatically ensure Prisma migrations & safe seed are applied on startup
-try {
-  console.log('🔄 Running production database migration check (npx prisma migrate deploy)...');
-  execSync('npx prisma migrate deploy', { stdio: 'inherit' });
-  console.log('🌱 Running safe database seed check (node prisma/seed.js)...');
-  execSync('node prisma/seed.js', { stdio: 'inherit' });
-} catch (migErr) {
-  console.error('⚠️ Database migration/seed startup notice:', migErr.message);
-}
 
 app.listen(PORT, () => {
   console.log(`🚀 CivicFix Backend running on http://localhost:${PORT}`);
