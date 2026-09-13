@@ -30,6 +30,8 @@ const ReportIssue = () => {
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [locating, setLocating] = useState(false);
+  const [locationStatus, setLocationStatus] = useState(null);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -46,10 +48,17 @@ const ReportIssue = () => {
 
   const handleUseCurrentLocation = () => {
     if ('geolocation' in navigator) {
+      setLocating(true);
+      setLocationStatus('Detecting your location...');
+      setError(null);
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setLatitude(position.coords.latitude.toFixed(6));
-          setLongitude(position.coords.longitude.toFixed(6));
+          const lat = position.coords.latitude.toFixed(6);
+          const lng = position.coords.longitude.toFixed(6);
+          setLatitude(lat);
+          setLongitude(lng);
+          setLocating(false);
+          setLocationStatus('Location detected');
           setError(null);
           if (!address) {
             setAddress(`GPS Location (${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)})`);
@@ -57,11 +66,12 @@ const ReportIssue = () => {
         },
         (err) => {
           console.error('Geolocation error:', err);
-          setError('Could not retrieve GPS location automatically. Please click anywhere on the Leaflet map below to set your pin or type an address.');
+          setLocating(false);
+          setLocationStatus('Unable to access your location. You can enter the address manually.');
         }
       );
     } else {
-      setError('Geolocation is not supported by your browser. Please select location on the map below.');
+      setLocationStatus('Geolocation is not supported by your browser. You can enter the address manually.');
     }
   };
 
@@ -189,12 +199,31 @@ const ReportIssue = () => {
                 <button
                   type="button"
                   onClick={handleUseCurrentLocation}
-                  className="text-xs font-semibold text-sky-600 hover:text-sky-800 flex items-center space-x-1"
+                  disabled={locating}
+                  className="text-xs font-semibold text-sky-600 hover:text-sky-800 flex items-center space-x-1 disabled:opacity-50"
                 >
                   <MapPin className="w-3.5 h-3.5" />
-                  <span>Use Current GPS</span>
+                  <span>{locating ? 'Detecting Location...' : 'Use Current GPS'}</span>
                 </button>
               </div>
+
+              {locationStatus && (
+                <div className={`mb-3 text-xs font-semibold px-3 py-2 rounded-lg flex items-center space-x-1.5 ${
+                  locationStatus.includes('Location detected')
+                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                    : locating
+                    ? 'bg-sky-50 text-sky-800 border border-sky-200 animate-pulse'
+                    : 'bg-amber-50 text-amber-800 border border-amber-200'
+                }`}>
+                  {locationStatus.includes('Location detected') ? (
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                  )}
+                  <span>{locationStatus}</span>
+                </div>
+              )}
+
               <input
                 type="text"
                 required

@@ -76,10 +76,10 @@ const Home = () => {
             Direct Civic Action Platform
           </span>
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight">
-            Fixing Local Problems Together
+            Report. Track. Resolve.
           </h1>
           <p className="mt-4 text-lg text-slate-300 max-w-2xl mx-auto font-normal">
-            Report potholes, broken streetlights, sewage leaks, or uncollected waste in your neighborhood. Track resolution progress in real time.
+            Report civic problems in your area, help your community prioritize them, and track them until they're resolved.
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -88,14 +88,62 @@ const Home = () => {
               className="w-full sm:w-auto px-6 py-3.5 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl shadow-lg shadow-sky-500/25 transition-all flex items-center justify-center space-x-2 text-base"
             >
               <PlusCircle className="w-5 h-5" />
-              <span>Report an Issue Now</span>
+              <span>Report an Issue</span>
             </Link>
+            <a
+              href="#issues-grid"
+              className="w-full sm:w-auto px-6 py-3.5 bg-slate-800/80 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold rounded-xl transition-all flex items-center justify-center space-x-2 text-base"
+            >
+              <Search className="w-5 h-5 text-slate-400" />
+              <span>Explore Issues</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* 3-Step Civic Process */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-4">
+            <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center font-bold text-lg shrink-0">
+              1
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900 text-sm">Report Problem</h4>
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                Take a photo, select category, and mark the exact location on the map.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-4">
+            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-lg shrink-0">
+              2
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900 text-sm">Community Upvotes</h4>
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                Upvote local reports. Reaching 10 upvotes triggers automatic municipal escalation.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-start space-x-4">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg shrink-0">
+              3
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900 text-sm">Track Resolution</h4>
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                Follow live status updates from municipal teams until the issue is resolved.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Filter & Search Bar */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+      <section id="issues-grid" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
           {/* Search form */}
           <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3">
