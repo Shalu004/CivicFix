@@ -36,9 +36,9 @@ async function main() {
   // 2. Create or Update Citizens (Safe Upsert)
   const citizen = await prisma.user.upsert({
     where: { email: 'citizen@civicfix.local' },
-    update: { passwordHash: citizenPasswordHash, role: 'CITIZEN' },
+    update: { name: 'Shalu Thakur', passwordHash: citizenPasswordHash, role: 'CITIZEN' },
     create: {
-      name: 'Rahul Sharma',
+      name: 'Shalu Thakur',
       email: 'citizen@civicfix.local',
       passwordHash: citizenPasswordHash,
       role: 'CITIZEN'
