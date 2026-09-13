@@ -6,18 +6,26 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Starting CivicFix database seeding (Ghaziabad, UP, India)...');
 
-  // Clean existing data
-  await prisma.statusHistory.deleteMany();
-  await prisma.vote.deleteMany();
-  await prisma.issue.deleteMany();
-  await prisma.user.deleteMany();
+  const forceReset = process.env.FORCE_RESET_SEED === 'true';
+
+  if (forceReset) {
+    console.log('⚠️ FORCE_RESET_SEED is true. Clearing existing database records...');
+    await prisma.statusHistory.deleteMany();
+    await prisma.vote.deleteMany();
+    await prisma.issue.deleteMany();
+    await prisma.user.deleteMany();
+  } else {
+    console.log('🛡️ Safe seed mode active. Preserving existing user and report data.');
+  }
 
   const adminPasswordHash = await bcrypt.hash('Admin@12345', 10);
   const citizenPasswordHash = await bcrypt.hash('Citizen@12345', 10);
 
-  // 1. Create Admin
-  const admin = await prisma.user.create({
-    data: {
+  // 1. Create or Update Admin (Safe Upsert)
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@civicfix.local' },
+    update: { passwordHash: adminPasswordHash, role: 'ADMIN' },
+    create: {
       name: 'System Admin',
       email: 'admin@civicfix.local',
       passwordHash: adminPasswordHash,
@@ -25,9 +33,11 @@ async function main() {
     }
   });
 
-  // 2. Create Citizens for realistic activity
-  const citizen = await prisma.user.create({
-    data: {
+  // 2. Create or Update Citizens (Safe Upsert)
+  const citizen = await prisma.user.upsert({
+    where: { email: 'citizen@civicfix.local' },
+    update: { passwordHash: citizenPasswordHash, role: 'CITIZEN' },
+    create: {
       name: 'Rahul Sharma',
       email: 'citizen@civicfix.local',
       passwordHash: citizenPasswordHash,
@@ -35,8 +45,10 @@ async function main() {
     }
   });
 
-  const citizen2 = await prisma.user.create({
-    data: {
+  const citizen2 = await prisma.user.upsert({
+    where: { email: 'priya@civicfix.local' },
+    update: { passwordHash: citizenPasswordHash, role: 'CITIZEN' },
+    create: {
       name: 'Priya Verma',
       email: 'priya@civicfix.local',
       passwordHash: citizenPasswordHash,
@@ -44,8 +56,10 @@ async function main() {
     }
   });
 
-  const citizen3 = await prisma.user.create({
-    data: {
+  const citizen3 = await prisma.user.upsert({
+    where: { email: 'amit@civicfix.local' },
+    update: { passwordHash: citizenPasswordHash, role: 'CITIZEN' },
+    create: {
       name: 'Amit Gupta',
       email: 'amit@civicfix.local',
       passwordHash: citizenPasswordHash,
@@ -53,9 +67,17 @@ async function main() {
     }
   });
 
-  console.log('✅ Demo Users seeded:');
+  console.log('✅ Demo Users verified/seeded:');
   console.log('   Admin:   admin@civicfix.local / Admin@12345');
   console.log('   Citizen: citizen@civicfix.local / Citizen@12345');
+
+  // Check if sample issues already exist to prevent duplication on multiple seed runs
+  const existingIssueCount = await prisma.issue.count();
+  if (existingIssueCount > 0 && !forceReset) {
+    console.log(`ℹ️ Database already contains ${existingIssueCount} issue records. Skipping demo issues creation.`);
+    console.log('🎉 Seeding completed safely!');
+    return;
+  }
 
   // 3. Sample Ghaziabad Civic Issues (Demonstration / Seed Data)
   const sampleIssues = [
